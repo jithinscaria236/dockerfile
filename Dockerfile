@@ -1,8 +1,15 @@
-# Use an existing docker image as a base
-FROM alpine:3.14
+# Use official Tomcat image as base
+FROM tomcat:latest
 
-# Download and install a dependency
-RUN apk add --update redis
+# Remove the default Tomcat applications
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Tell the image what to do when it starts as a container
-CMD ["redis-server"]
+# Copy your WAR file into the Tomcat webapps directory
+COPY /var/lib/jenkins/workspace/sonar-maven/target/artifacts/petclinic.war  /usr/local/tomcat/webapps/your-application.war
+
+# Expose the default Tomcat port
+EXPOSE 8081
+
+# Start Tomcat when the container launches
+CMD ["catalina.sh", "run"]
+
